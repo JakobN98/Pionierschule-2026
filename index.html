@@ -7,8 +7,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,sans-serif;background:#f0efe9;overflow:hidden;height:100vh;width:100vw}
-
-#toolbar{position:fixed;top:0;left:0;right:0;height:48px;background:#fff;border-bottom:1px solid #e0dfd8;display:flex;align-items:center;padding:0 16px;gap:8px;z-index:50}
+#toolbar{position:fixed;top:0;left:0;right:0;height:48px;background:#fff;border-bottom:1px solid #e0dfd8;display:flex;align-items:center;padding:0 16px;gap:8px;z-index:50;flex-wrap:wrap}
 #toolbar h1{font-size:14px;font-weight:500;color:#333;margin-right:8px}
 .btn{padding:6px 12px;border-radius:6px;border:1px solid #ccc;background:#fff;font-size:12px;cursor:pointer;white-space:nowrap}
 .btn:hover{background:#f5f4f0}
@@ -18,13 +17,10 @@ body{font-family:system-ui,sans-serif;background:#f0efe9;overflow:hidden;height:
 .btn-danger:hover{background:#FCEBEB}
 .sep{width:1px;height:24px;background:#e0dfd8;margin:0 4px}
 .hint-bar{font-size:11px;color:#aaa;margin-left:auto}
-
 #canvas{position:fixed;top:48px;left:0;right:0;bottom:0;overflow:hidden;cursor:grab}
 #canvas.grabbing{cursor:grabbing}
 #world{position:absolute;top:0;left:0;transform-origin:0 0}
-
-svg#lines{position:absolute;top:0;left:0;overflow:visible;pointer-events:none}
-
+svg#lines{position:absolute;top:0;left:0;overflow:visible;pointer-events:none;width:3000px;height:2000px}
 .node{position:absolute;border-radius:9px;padding:10px 14px;min-width:110px;max-width:150px;text-align:center;cursor:grab;user-select:none;transition:box-shadow .15s;border:1.5px solid transparent}
 .node:hover{box-shadow:0 4px 16px rgba(0,0,0,.13)}
 .node.dragging{cursor:grabbing;box-shadow:0 8px 28px rgba(0,0,0,.22);z-index:999;opacity:.95}
@@ -34,13 +30,10 @@ svg#lines{position:absolute;top:0;left:0;overflow:visible;pointer-events:none}
 .node-sub{font-size:10px;margin-top:2px;opacity:.6}
 .node-edit-btn{position:absolute;top:4px;right:6px;font-size:10px;opacity:0;cursor:pointer;background:rgba(255,255,255,.7);border-radius:3px;padding:1px 4px;transition:opacity .1s}
 .node:hover .node-edit-btn{opacity:1}
-
 .c-purple{background:#EEEDFE;border-color:#534AB7;color:#3C3489}
 .c-teal{background:#E1F5EE;border-color:#0F6E56;color:#085041}
 .c-coral{background:#FAECE7;border-color:#993C1D;color:#712B13}
 .c-gray{background:#F1EFE8;border-color:#5F5E5A;color:#444441}
-
-/* Edit modal */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:200}
 .modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:14px;box-shadow:0 12px 48px rgba(0,0,0,.22);padding:24px;width:300px;z-index:201}
 .modal h3{font-size:15px;font-weight:500;margin-bottom:16px}
@@ -48,9 +41,7 @@ svg#lines{position:absolute;top:0;left:0;overflow:visible;pointer-events:none}
 .modal input,.modal select{width:100%;padding:7px 10px;border-radius:7px;border:1px solid #ddd;font-size:13px;outline:none}
 .modal input:focus,.modal select:focus{border-color:#534AB7}
 .modal-actions{display:flex;gap:8px;margin-top:20px}
-.modal-actions .btn{flex:1;justify-content:center;text-align:center}
-
-/* Legend */
+.modal-actions .btn{flex:1;text-align:center}
 #legend{position:fixed;bottom:12px;left:12px;background:#fff;border-radius:9px;padding:10px 14px;font-size:11px;color:#666;box-shadow:0 2px 10px rgba(0,0,0,.1);z-index:50}
 .leg{display:flex;align-items:center;gap:6px;margin-top:4px}
 .leg-dot{width:10px;height:10px;border-radius:3px}
@@ -58,7 +49,6 @@ svg#lines{position:absolute;top:0;left:0;overflow:visible;pointer-events:none}
 .lt{background:#E1F5EE;border:1px solid #0F6E56}
 .lc{background:#FAECE7;border:1px solid #993C1D}
 .lg{background:#F1EFE8;border:1px solid #5F5E5A}
-
 #zoom-info{position:fixed;bottom:12px;right:12px;font-size:11px;color:#aaa;background:#fff;padding:6px 10px;border-radius:7px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
 </style>
 </head>
@@ -67,14 +57,14 @@ svg#lines{position:absolute;top:0;left:0;overflow:visible;pointer-events:none}
 <div id="toolbar">
   <h1>Seminar-Organigramm</h1>
   <div class="sep"></div>
-  <button class="btn btn-primary" onclick="addNode()">+ Rolle</button>
-  <button class="btn btn-danger" onclick="deleteSelected()">Löschen</button>
+  <button class="btn btn-primary" id="btnAdd">+ Rolle</button>
+  <button class="btn btn-danger" id="btnDel">Löschen</button>
   <div class="sep"></div>
-  <button class="btn" onclick="resetView()">Ansicht zurücksetzen</button>
-  <button class="btn" onclick="window.print()">Drucken</button>
+  <button class="btn" id="btnReset">Ansicht zurücksetzen</button>
+  <button class="btn" id="btnPrint">Drucken</button>
   <div class="sep"></div>
-  <button class="btn btn-primary" id="btn-export">💾 Speichern</button>
-  <label class="btn" style="cursor:pointer">📂 Laden <input type="file" id="btn-import" accept=".json" style="display:none"/></label>
+  <button class="btn btn-primary" id="btnSave">💾 Speichern</button>
+  <label class="btn" style="cursor:pointer">📂 Laden<input type="file" id="btnLoad" accept=".json" style="display:none"/></label>
   <span class="hint-bar">Ziehen = verschieben &nbsp;|&nbsp; Doppelklick = bearbeiten &nbsp;|&nbsp; Scroll = zoomen</span>
 </div>
 
@@ -91,19 +81,15 @@ svg#lines{position:absolute;top:0;left:0;overflow:visible;pointer-events:none}
   <div class="leg"><div class="leg-dot lc"></div> Teamverantw.</div>
   <div class="leg"><div class="leg-dot lg"></div> Helfer / Verantw.</div>
 </div>
-
 <div id="zoom-info">100%</div>
 
-<div class="overlay" id="overlay" onclick="closeModal()"></div>
+<div class="overlay" id="overlay"></div>
 <div class="modal" id="modal">
   <h3>Rolle bearbeiten</h3>
-  <label>Rollenbezeichnung</label>
-  <input id="m-title" type="text" placeholder="z.B. Bereichsleiter"/>
-  <label>Name der Person</label>
-  <input id="m-name" type="text" placeholder="z.B. Max Mustermann"/>
-  <label>Zusatzinfo</label>
-  <input id="m-sub" type="text" placeholder="z.B. täglich anwesend"/>
-  <label>Farbe / Ebene</label>
+  <label>Rollenbezeichnung</label><input id="m-title" type="text"/>
+  <label>Name der Person</label><input id="m-name" type="text" placeholder="z.B. Max Mustermann"/>
+  <label>Zusatzinfo</label><input id="m-sub" type="text"/>
+  <label>Farbe</label>
   <select id="m-color">
     <option value="c-purple">Lila – Schulorganisator</option>
     <option value="c-teal">Grün – Bereichsleiter</option>
@@ -111,269 +97,232 @@ svg#lines{position:absolute;top:0;left:0;overflow:visible;pointer-events:none}
     <option value="c-gray">Grau – Helfer</option>
   </select>
   <div class="modal-actions">
-    <button class="btn btn-primary" onclick="saveModal()">Speichern</button>
-    <button class="btn" onclick="closeModal()">Abbrechen</button>
+    <button class="btn btn-primary" id="btnSaveModal">Speichern</button>
+    <button class="btn" id="btnCloseModal">Abbrechen</button>
   </div>
 </div>
 
 <script>
-window.nodes = [
-  {id:1, x:320, y:30,  title:'Schulorganisator',      name:'', sub:'Gesamtverantwortung', color:'c-purple'},
-  {id:2, x:20,  y:160, title:'Technik & Schulungsraum',name:'', sub:'Bereichsleiter',      color:'c-teal'},
-  {id:3, x:175, y:160, title:'Verpflegung',            name:'', sub:'Bereichsleiter',      color:'c-teal'},
-  {id:4, x:330, y:160, title:'Unterkünfte',            name:'', sub:'Bereichsleiter',      color:'c-teal'},
-  {id:5, x:490, y:160, title:'Geschenke',              name:'', sub:'Bereichsleiter',      color:'c-teal'},
-  {id:6, x:620, y:160, title:'Predigtdienst',          name:'', sub:'Bereichsleiter',      color:'c-teal'},
-  {id:7, x:20,  y:300, title:'Techniker',              name:'', sub:'Auf-/Abbau',          color:'c-gray'},
-  {id:8, x:155, y:300, title:'Raumverantw.',           name:'', sub:'',                   color:'c-gray'},
-  {id:9, x:100, y:300, title:'Einkauf',                name:'', sub:'Teamverantw.',        color:'c-coral'},
-  {id:10,x:220, y:300, title:'Kochen',                 name:'', sub:'Teamverantw.',        color:'c-coral'},
-  {id:11,x:310, y:300, title:'Ausgabe',                name:'', sub:'Teamverantw.',        color:'c-coral'},
-  {id:12,x:390, y:300, title:'Reinigung',              name:'', sub:'Teamverantw.',        color:'c-coral'},
-  {id:13,x:310, y:300, title:'Koord. Gastgeber',       name:'', sub:'',                   color:'c-gray'},
-  {id:14,x:430, y:300, title:'Kontakt Schüler',        name:'', sub:'',                   color:'c-gray'},
-  {id:15,x:490, y:300, title:'Einkauf & Verteilung',   name:'', sub:'',                   color:'c-gray'},
-  {id:16,x:590, y:300, title:'Terminplaner',           name:'', sub:'',                   color:'c-gray'},
-  {id:17,x:700, y:300, title:'Fahrer / Begleitung',    name:'', sub:'',                   color:'c-gray'},
-  {id:18,x:80,  y:440, title:'1–2 Helfer',             name:'', sub:'Einkauf',            color:'c-gray'},
-  {id:19,x:200, y:440, title:'2–3 Helfer',             name:'', sub:'Kochteam',           color:'c-gray'},
-  {id:20,x:310, y:440, title:'1 Bruder',               name:'', sub:'täglich anwesend',   color:'c-gray'},
-  {id:21,x:410, y:440, title:'1–2 Helfer',             name:'', sub:'Reinigung',          color:'c-gray'},
-];
-
-window.edges = [
-  [1,2],[1,3],[1,4],[1,5],[1,6],
-  [2,7],[2,8],
-  [3,9],[3,10],[3,11],[3,12],
-  [4,13],[4,14],
-  [5,15],
-  [6,16],[6,17],
-  [9,18],[10,19],[11,20],[12,21],
-];
-
-// Reposition to nice layout
-const layout = {
-  1:{x:330,y:30},
-  2:{x:30,y:160},3:{x:170,y:160},4:{x:340,y:160},5:{x:500,y:160},6:{x:630,y:160},
-  7:{x:20,y:300},8:{x:140,y:300},
-  9:{x:140,y:300},10:{x:250,y:300},11:{x:340,y:300},12:{x:430,y:300},
-  13:{x:330,y:300},14:{x:450,y:300},
-  15:{x:500,y:300},
-  16:{x:600,y:300},17:{x:710,y:300},
-  18:{x:130,y:440},19:{x:240,y:440},20:{x:330,y:440},21:{x:420,y:440},
+var state = {
+  nodes: [
+    {id:1,  x:330, y:30,  title:'Schulorganisator',       name:'', sub:'Gesamtverantwortung', color:'c-purple'},
+    {id:2,  x:30,  y:160, title:'Technik & Schulungsraum', name:'', sub:'Bereichsleiter',      color:'c-teal'},
+    {id:3,  x:170, y:160, title:'Verpflegung',             name:'', sub:'Bereichsleiter',      color:'c-teal'},
+    {id:4,  x:340, y:160, title:'Unterkünfte',             name:'', sub:'Bereichsleiter',      color:'c-teal'},
+    {id:5,  x:500, y:160, title:'Geschenke',               name:'', sub:'Bereichsleiter',      color:'c-teal'},
+    {id:6,  x:630, y:160, title:'Predigtdienst',           name:'', sub:'Bereichsleiter',      color:'c-teal'},
+    {id:7,  x:20,  y:300, title:'Techniker',               name:'', sub:'Auf-/Abbau',          color:'c-gray'},
+    {id:8,  x:140, y:300, title:'Raumverantw.',            name:'', sub:'',                    color:'c-gray'},
+    {id:9,  x:130, y:300, title:'Einkauf',                 name:'', sub:'Teamverantw.',        color:'c-coral'},
+    {id:10, x:240, y:300, title:'Kochen',                  name:'', sub:'Teamverantw.',        color:'c-coral'},
+    {id:11, x:330, y:300, title:'Ausgabe',                 name:'', sub:'Teamverantw.',        color:'c-coral'},
+    {id:12, x:420, y:300, title:'Reinigung',               name:'', sub:'Teamverantw.',        color:'c-coral'},
+    {id:13, x:320, y:300, title:'Koord. Gastgeber',        name:'', sub:'',                    color:'c-gray'},
+    {id:14, x:440, y:300, title:'Kontakt Schüler',         name:'', sub:'',                    color:'c-gray'},
+    {id:15, x:500, y:300, title:'Einkauf & Verteilung',    name:'', sub:'',                    color:'c-gray'},
+    {id:16, x:600, y:300, title:'Terminplaner',            name:'', sub:'',                    color:'c-gray'},
+    {id:17, x:710, y:300, title:'Fahrer / Begleitung',     name:'', sub:'',                    color:'c-gray'},
+    {id:18, x:120, y:440, title:'1–2 Helfer',              name:'', sub:'Einkauf',             color:'c-gray'},
+    {id:19, x:230, y:440, title:'2–3 Helfer',              name:'', sub:'Kochteam',            color:'c-gray'},
+    {id:20, x:320, y:440, title:'1 Bruder',                name:'', sub:'täglich anwesend',    color:'c-gray'},
+    {id:21, x:410, y:440, title:'1–2 Helfer',              name:'', sub:'Reinigung',           color:'c-gray'},
+  ],
+  edges: [
+    [1,2],[1,3],[1,4],[1,5],[1,6],
+    [2,7],[2,8],
+    [3,9],[3,10],[3,11],[3,12],
+    [4,13],[4,14],
+    [5,15],
+    [6,16],[6,17],
+    [9,18],[10,19],[11,20],[12,21],
+  ],
+  nextId: 22
 };
-nodes.forEach(n=>{ if(layout[n.id]){n.x=layout[n.id].x;n.y=layout[n.id].y;} });
 
-let nextId = 22, selId = null, editId = null;
-let pan = {x:40, y:20}, zoom = 1;
-let drag = null, panDrag = null;
+var selId = null, editId = null;
+var pan = {x:40, y:20}, zoom = 1;
+var drag = null, panDrag = null;
 
-const world = document.getElementById('world');
-const canvas = document.getElementById('canvas');
-const svg = document.getElementById('lines');
+var world = document.getElementById('world');
+var canvas = document.getElementById('canvas');
+var svg = document.getElementById('lines');
 
-function nodeW(n) {
-  // estimate width from title length
-  return Math.max(110, Math.min(150, n.title.length * 8 + 28));
-}
-function nodeH(n) { return n.name ? 70 : n.sub ? 58 : 44; }
+function nW(n){ return Math.max(110, Math.min(150, n.title.length*8+28)); }
+function nH(n){ return n.name ? 70 : n.sub ? 58 : 44; }
 
 function render() {
-  // remove old node els
-  world.querySelectorAll('.node').forEach(e=>e.remove());
-  // draw nodes
-  nodes.forEach(n => {
-    const el = document.createElement('div');
-    el.className = 'node ' + n.color + (selId===n.id?' selected':'');
-    el.id = 'n'+n.id;
-    el.style.left = n.x+'px';
-    el.style.top  = n.y+'px';
-    el.style.width = nodeW(n)+'px';
-    el.innerHTML = `<span class="node-edit-btn" onclick="openModal(${n.id},event)">✎</span>`+
-      `<div class="node-title">${n.title}</div>`+
-      (n.name?`<div class="node-name">${n.name}</div>`:'')+
-      (n.sub?`<div class="node-sub">${n.sub}</div>`:'');
-    el.addEventListener('mousedown', e => startDrag(e, n.id));
-    el.addEventListener('dblclick', e => { e.stopPropagation(); openModal(n.id, e); });
-    el.addEventListener('click', e => { e.stopPropagation(); selId = n.id; render(); });
-    world.appendChild(el);
-  });
-  drawLines();
-  world.style.transform = `translate(${pan.x}px,${pan.y}px) scale(${zoom})`;
-  document.getElementById('zoom-info').textContent = Math.round(zoom*100)+'%';
-}
-
-function drawLines() {
+  world.querySelectorAll('.node').forEach(function(e){ e.remove(); });
   svg.innerHTML = '';
-  svg.style.width = '3000px';
-  svg.style.height = '2000px';
-  edges.forEach(([a,b]) => {
-    const na = nodes.find(x=>x.id===a), nb = nodes.find(x=>x.id===b);
-    if (!na||!nb) return;
-    const ax = na.x + nodeW(na)/2, ay = na.y + nodeH(na);
-    const bx = nb.x + nodeW(nb)/2, by = nb.y;
-    const my = ay + (by-ay)*0.5;
-    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
-    path.setAttribute('d',`M${ax},${ay} C${ax},${my} ${bx},${my} ${bx},${by}`);
-    path.setAttribute('fill','none');
-    path.setAttribute('stroke','#bbb');
-    path.setAttribute('stroke-width','1.5');
+
+  // draw edges
+  svg.style.width='3000px'; svg.style.height='2000px';
+  state.edges.forEach(function(edge) {
+    var a = state.nodes.filter(function(x){ return x.id===edge[0]; })[0];
+    var b = state.nodes.filter(function(x){ return x.id===edge[1]; })[0];
+    if (!a||!b) return;
+    var ax=a.x+nW(a)/2, ay=a.y+nH(a), bx=b.x+nW(b)/2, by=b.y, my=ay+(by-ay)*0.5;
+    var path=document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d','M'+ax+','+ay+' C'+ax+','+my+' '+bx+','+my+' '+bx+','+by);
+    path.setAttribute('fill','none'); path.setAttribute('stroke','#bbb'); path.setAttribute('stroke-width','1.5');
     svg.appendChild(path);
   });
+
+  // draw nodes
+  state.nodes.forEach(function(n) {
+    var el=document.createElement('div');
+    el.className='node '+n.color+(selId===n.id?' selected':'');
+    el.style.left=n.x+'px'; el.style.top=n.y+'px'; el.style.width=nW(n)+'px';
+    el.innerHTML='<span class="node-edit-btn" data-id="'+n.id+'">✎</span>'+
+      '<div class="node-title">'+n.title+'</div>'+
+      (n.name?'<div class="node-name">'+n.name+'</div>':'')+
+      (n.sub?'<div class="node-sub">'+n.sub+'</div>':'');
+    el.addEventListener('mousedown', function(e){ startDrag(e,n.id); });
+    el.addEventListener('dblclick', function(e){ e.stopPropagation(); openModal(n.id); });
+    el.addEventListener('click', function(e){ e.stopPropagation(); selId=n.id; render(); });
+    el.querySelector('.node-edit-btn').addEventListener('click', function(e){ e.stopPropagation(); openModal(n.id); });
+    world.appendChild(el);
+  });
+
+  world.style.transform='translate('+pan.x+'px,'+pan.y+'px) scale('+zoom+')';
+  document.getElementById('zoom-info').textContent=Math.round(zoom*100)+'%';
 }
 
-// Drag nodes
-function startDrag(e, id) {
-  if (e.button !== 0) return;
+function startDrag(e,id) {
+  if(e.button!==0) return;
   e.stopPropagation();
-  const n = nodes.find(x=>x.id===id);
-  selId = id;
-  drag = { id, startX: e.clientX, startY: e.clientY, ox: n.x, oy: n.y };
-  document.getElementById('n'+id).classList.add('dragging');
-  document.getElementById('btn-export').addEventListener('click', function() {
-  try {
-    const blob = new Blob([JSON.stringify({nodes, edges}, null, 2)], {type:'application/json'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'organigramm-stand.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  } catch(err) { alert('Fehler: ' + err.message); }
-});
-
-document.getElementById('btn-import').addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev) {
-    console.log('Datei gelesen:', ev.target.result.substring(0, 100));
-    try {
-      const d = JSON.parse(ev.target.result);
-      console.log('Nodes gefunden:', d.nodes.length, 'Edges:', d.edges.length);
-      window.nodes = d.nodes.slice();
-      window.edges = d.edges.slice();
-      window.nextId = Math.max(...window.nodes.map(n => n.id)) + 1;
-      selId = null;
-      world.querySelectorAll('.node').forEach(e => e.remove());
-      document.querySelectorAll('.svg-lines').forEach(e => e.remove());
-      console.log('Render wird aufgerufen...');
-      render();
-      console.log('Render fertig!');
-    } catch(err) { alert('Fehler beim Laden: ' + err.message); }
-  };
-  reader.readAsText(file);
-  e.target.value = '';
-});
+  var n=state.nodes.filter(function(x){ return x.id===id; })[0];
+  selId=id;
+  drag={id:id, startX:e.clientX, startY:e.clientY, ox:n.x, oy:n.y};
+  document.getElementById('n'+id) && document.getElementById('n'+id).classList.add('dragging');
+  render();
 }
-document.addEventListener('mousemove', e => {
+
+document.addEventListener('mousemove', function(e) {
   if (drag) {
-    const n = nodes.find(x=>x.id===drag.id);
-    n.x = drag.ox + (e.clientX - drag.startX)/zoom;
-    n.y = drag.oy + (e.clientY - drag.startY)/zoom;
+    var n=state.nodes.filter(function(x){ return x.id===drag.id; })[0];
+    n.x=drag.ox+(e.clientX-drag.startX)/zoom;
+    n.y=drag.oy+(e.clientY-drag.startY)/zoom;
     render();
   }
   if (panDrag) {
-    pan.x = panDrag.ox + (e.clientX - panDrag.startX);
-    pan.y = panDrag.oy + (e.clientY - panDrag.startY);
-    world.style.transform = `translate(${pan.x}px,${pan.y}px) scale(${zoom})`;
+    pan.x=panDrag.ox+(e.clientX-panDrag.startX);
+    pan.y=panDrag.oy+(e.clientY-panDrag.startY);
+    world.style.transform='translate('+pan.x+'px,'+pan.y+'px) scale('+zoom+')';
   }
 });
-document.addEventListener('mouseup', e => {
-  if (drag) { document.getElementById('n'+drag.id)?.classList.remove('dragging'); drag=null; }
-  panDrag = null;
+
+document.addEventListener('mouseup', function() {
+  drag=null; panDrag=null;
   canvas.classList.remove('grabbing');
 });
 
-// Pan canvas
-canvas.addEventListener('mousedown', e => {
-  if (e.button===0 && !drag) {
-    panDrag = {startX:e.clientX,startY:e.clientY,ox:pan.x,oy:pan.y};
+canvas.addEventListener('mousedown', function(e) {
+  if(e.button===0&&!drag) {
+    panDrag={startX:e.clientX,startY:e.clientY,ox:pan.x,oy:pan.y};
     canvas.classList.add('grabbing');
     selId=null; render();
   }
 });
 
-// Zoom
-canvas.addEventListener('wheel', e => {
+canvas.addEventListener('wheel', function(e) {
   e.preventDefault();
-  const delta = e.deltaY > 0 ? 0.9 : 1.1;
-  const rect = canvas.getBoundingClientRect();
-  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
-  pan.x = mx - (mx - pan.x)*delta;
-  pan.y = my - (my - pan.y)*delta;
-  zoom = Math.max(0.3, Math.min(2.5, zoom*delta));
-  world.style.transform = `translate(${pan.x}px,${pan.y}px) scale(${zoom})`;
-  document.getElementById('zoom-info').textContent = Math.round(zoom*100)+'%';
-}, {passive:false});
-
-// Touch zoom/pan
-let touches = {};
-canvas.addEventListener('touchstart', e=>{
-  [...e.changedTouches].forEach(t=>touches[t.identifier]={x:t.clientX,y:t.clientY});
-},{passive:true});
-canvas.addEventListener('touchmove', e=>{
-  e.preventDefault();
-  if(e.touches.length===1){
-    const t=e.touches[0], prev=touches[t.identifier]||{x:t.clientX,y:t.clientY};
-    pan.x+=t.clientX-prev.x; pan.y+=t.clientY-prev.y;
-    world.style.transform=`translate(${pan.x}px,${pan.y}px) scale(${zoom})`;
-    touches[t.identifier]={x:t.clientX,y:t.clientY};
-  }
+  var delta=e.deltaY>0?0.9:1.1;
+  var rect=canvas.getBoundingClientRect();
+  var mx=e.clientX-rect.left, my=e.clientY-rect.top;
+  pan.x=mx-(mx-pan.x)*delta; pan.y=my-(my-pan.y)*delta;
+  zoom=Math.max(0.3,Math.min(2.5,zoom*delta));
+  world.style.transform='translate('+pan.x+'px,'+pan.y+'px) scale('+zoom+')';
+  document.getElementById('zoom-info').textContent=Math.round(zoom*100)+'%';
 },{passive:false});
 
-function resetView() { pan={x:40,y:20}; zoom=1; render(); }
-
-// Modal
-function openModal(id, e) {
-  if(e) e.stopPropagation();
-  const n = nodes.find(x=>x.id===id);
-  editId = id;
-  document.getElementById('m-title').value = n.title;
-  document.getElementById('m-name').value  = n.name;
-  document.getElementById('m-sub').value   = n.sub;
-  document.getElementById('m-color').value = n.color;
-  document.getElementById('modal').style.display = 'block';
-  document.getElementById('overlay').style.display = 'block';
-  setTimeout(()=>document.getElementById('m-name').focus(),50);
+function openModal(id) {
+  var n=state.nodes.filter(function(x){ return x.id===id; })[0];
+  editId=id;
+  document.getElementById('m-title').value=n.title;
+  document.getElementById('m-name').value=n.name;
+  document.getElementById('m-sub').value=n.sub;
+  document.getElementById('m-color').value=n.color;
+  document.getElementById('modal').style.display='block';
+  document.getElementById('overlay').style.display='block';
+  setTimeout(function(){ document.getElementById('m-name').focus(); },50);
 }
+
 function closeModal() {
   document.getElementById('modal').style.display='none';
   document.getElementById('overlay').style.display='none';
 }
-function saveModal() {
-  const n = nodes.find(x=>x.id===editId);
-  n.title = document.getElementById('m-title').value||n.title;
-  n.name  = document.getElementById('m-name').value;
-  n.sub   = document.getElementById('m-sub').value;
-  n.color = document.getElementById('m-color').value;
+
+document.getElementById('overlay').addEventListener('click', closeModal);
+document.getElementById('btnCloseModal').addEventListener('click', closeModal);
+document.getElementById('btnSaveModal').addEventListener('click', function() {
+  var n=state.nodes.filter(function(x){ return x.id===editId; })[0];
+  n.title=document.getElementById('m-title').value||n.title;
+  n.name=document.getElementById('m-name').value;
+  n.sub=document.getElementById('m-sub').value;
+  n.color=document.getElementById('m-color').value;
   closeModal(); render();
-}
-document.getElementById('m-name').addEventListener('keydown',e=>{if(e.key==='Enter')saveModal();});
+});
 
-function deleteSelected() {
-  if(!selId||selId===1){alert('Bitte zuerst eine Rolle anklicken (nicht den Schulorganisator).'); return;}
+document.getElementById('btnDel').addEventListener('click', function() {
+  if(!selId||selId===1){ alert('Bitte zuerst eine Rolle anklicken.'); return; }
   if(!confirm('Rolle wirklich löschen?')) return;
-  const idx=nodes.findIndex(x=>x.id===selId);
-  if(idx>-1) nodes.splice(idx,1);
-  edges.forEach((e,i)=>{ if(e[0]===selId||e[1]===selId) edges[i]=null; });
-  edges.splice(0,edges.length,...edges.filter(Boolean));
+  state.nodes=state.nodes.filter(function(x){ return x.id!==selId; });
+  state.edges=state.edges.filter(function(e){ return e[0]!==selId&&e[1]!==selId; });
   selId=null; render();
-}
+});
 
-function addNode() {
-  const title = prompt('Rollenbezeichnung:'); if(!title) return;
-  const name  = prompt('Name der Person (optional):') || '';
-  const sub   = prompt('Zusatzinfo (optional):') || '';
-  const colors = {'1':'c-purple','2':'c-teal','3':'c-coral','4':'c-gray'};
-  const cv = prompt('Farbe:\n1 = Lila (Schulorganisator)\n2 = Grün (Bereichsleiter)\n3 = Orange (Teamverantw.)\n4 = Grau (Helfer)') || '4';
-  const color = colors[cv] || 'c-gray';
-  const pid = parseInt(prompt('ID der übergeordneten Rolle (oder leer lassen):\n'+nodes.map(n=>`${n.id}: ${n.title}`).join('\n')));
-  const newNode = {id:nextId++, x:200+Math.random()*200, y:200+Math.random()*100, title, name, sub, color};
-  nodes.push(newNode);
-  if(pid && nodes.find(x=>x.id===pid)) edges.push([pid, newNode.id]);
+document.getElementById('btnAdd').addEventListener('click', function() {
+  var title=prompt('Rollenbezeichnung:'); if(!title) return;
+  var name=prompt('Name (optional):')||'';
+  var sub=prompt('Zusatzinfo (optional):')||'';
+  var cv=prompt('Farbe:\n1=Lila\n2=Grün\n3=Orange\n4=Grau')||'4';
+  var colors={'1':'c-purple','2':'c-teal','3':'c-coral','4':'c-gray'};
+  var color=colors[cv]||'c-gray';
+  var pid=parseInt(prompt('ID der übergeordneten Rolle:\n'+state.nodes.map(function(n){ return n.id+': '+n.title; }).join('\n')));
+  var newNode={id:state.nextId++, x:200+Math.random()*200, y:200+Math.random()*100, title:title, name:name, sub:sub, color:color};
+  state.nodes.push(newNode);
+  if(pid&&state.nodes.filter(function(x){ return x.id===pid; }).length) state.edges.push([pid,newNode.id]);
   render();
-}
+});
+
+document.getElementById('btnReset').addEventListener('click', function() {
+  pan={x:40,y:20}; zoom=1; render();
+});
+
+document.getElementById('btnPrint').addEventListener('click', function() {
+  window.print();
+});
+
+document.getElementById('btnSave').addEventListener('click', function() {
+  var json=JSON.stringify({nodes:state.nodes, edges:state.edges, nextId:state.nextId}, null, 2);
+  var blob=new Blob([json],{type:'application/json'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='organigramm-stand.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+});
+
+document.getElementById('btnLoad').addEventListener('change', function(e) {
+  var file=e.target.files[0];
+  if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(ev) {
+    try {
+      var d=JSON.parse(ev.target.result);
+      state.nodes=d.nodes;
+      state.edges=d.edges;
+      state.nextId=d.nextId||Math.max.apply(null,d.nodes.map(function(n){ return n.id; }))+1;
+      selId=null;
+      render();
+    } catch(err) {
+      alert('Fehler beim Laden: '+err.message);
+    }
+  };
+  reader.readAsText(file);
+  e.target.value='';
+});
 
 render();
 </script>
