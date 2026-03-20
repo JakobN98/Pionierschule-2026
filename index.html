@@ -293,7 +293,7 @@ document.getElementById('btnPrint').addEventListener('click', function() {
   window.print();
 });
 
-document.getElementById('btnSave').addEventListener('click', function() {
+document.getElementById('btnSave').onclick = function() {
   var json=JSON.stringify({nodes:state.nodes, edges:state.edges, nextId:state.nextId}, null, 2);
   var blob=new Blob([json],{type:'application/json'});
   var a=document.createElement('a');
@@ -304,7 +304,7 @@ document.getElementById('btnSave').addEventListener('click', function() {
   document.body.removeChild(a);
 });
 
-document.getElementById('btnLoad').addEventListener('change', function(e) {
+document.getElementById('btnLoad').onchange = function(e) {
   var file=e.target.files[0];
   if(!file) return;
   var reader=new FileReader();
