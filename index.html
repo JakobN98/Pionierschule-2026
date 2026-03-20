@@ -246,13 +246,18 @@ document.getElementById('btn-import').addEventListener('change', function(e) {
   const file = e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = ev => {
+  reader.onload = function(ev) {
     try {
       const d = JSON.parse(ev.target.result);
-      nodes.splice(0, nodes.length, ...d.nodes);
-      edges.splice(0, edges.length, ...d.edges);
-      nextId = Math.max(...nodes.map(n=>n.id)) + 1;
+      if (!d.nodes || !d.edges) { alert('Ungültige Datei.'); return; }
+      nodes.length = 0;
+      edges.length = 0;
+      d.nodes.forEach(n => nodes.push(n));
+      d.edges.forEach(e => edges.push(e));
+      nextId = Math.max(...nodes.map(n => n.id)) + 1;
+      selId = null;
       render();
+      alert('Erfolgreich geladen!');
     } catch(err) { alert('Fehler beim Laden: ' + err.message); }
   };
   reader.readAsText(file);
