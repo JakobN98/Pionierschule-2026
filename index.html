@@ -247,16 +247,19 @@ document.getElementById('btn-import').addEventListener('change', function(e) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = function(ev) {
+    console.log('Datei gelesen:', ev.target.result.substring(0, 100));
     try {
       const d = JSON.parse(ev.target.result);
-      if (!d.nodes || !d.edges) { alert('Ungültige Datei.'); return; }
+      console.log('Nodes gefunden:', d.nodes.length, 'Edges:', d.edges.length);
       nodes = d.nodes.slice();
       edges = d.edges.slice();
       nextId = Math.max(...nodes.map(n => n.id)) + 1;
       selId = null;
       world.querySelectorAll('.node').forEach(e => e.remove());
       document.querySelectorAll('.svg-lines').forEach(e => e.remove());
+      console.log('Render wird aufgerufen...');
       render();
+      console.log('Render fertig!');
     } catch(err) { alert('Fehler beim Laden: ' + err.message); }
   };
   reader.readAsText(file);
