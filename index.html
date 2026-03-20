@@ -210,9 +210,9 @@ function render(){
     el.querySelector(".eb").textContent="✎";
     (function(id){
       el.addEventListener("mousedown",function(ev){ startDrag(ev,id); });
-      el.addEventListener("dblclick",function(ev){ ev.stopPropagation(); openMo(id); });
-      el.addEventListener("click",function(ev){ ev.stopPropagation(); sel=id; render(); });
-      el.querySelector(".eb").addEventListener("click",function(ev){ ev.stopPropagation(); openMo(id); });
+      el.addEventListener("dblclick",function(ev){ ev.stopPropagation(); console.log("dblclick",id); openMo(id); });
+      el.addEventListener("click",function(ev){ ev.stopPropagation(); console.log("click",id); sel=id; render(); });
+      el.querySelector(".eb").addEventListener("click",function(ev){ ev.stopPropagation(); console.log("eb click",id); openMo(id); });
     })(nd.id);
     world.appendChild(el);
   }
