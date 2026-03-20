@@ -21,308 +21,290 @@ body{font-family:system-ui,sans-serif;background:#f0efe9;overflow:hidden;height:
 #canvas.grabbing{cursor:grabbing}
 #world{position:absolute;top:0;left:0;transform-origin:0 0}
 svg#lines{position:absolute;top:0;left:0;overflow:visible;pointer-events:none;width:3000px;height:2000px}
-.node{position:absolute;border-radius:9px;padding:10px 14px;min-width:110px;max-width:150px;text-align:center;cursor:grab;user-select:none;transition:box-shadow .15s;border:1.5px solid transparent}
-.node:hover{box-shadow:0 4px 16px rgba(0,0,0,.13)}
-.node.dragging{cursor:grabbing;box-shadow:0 8px 28px rgba(0,0,0,.22);z-index:999;opacity:.95}
-.node.selected{box-shadow:0 0 0 2.5px #534AB7}
-.node-title{font-size:12px;font-weight:500;line-height:1.3}
-.node-name{font-size:11px;margin-top:3px;opacity:.8;font-style:italic}
-.node-sub{font-size:10px;margin-top:2px;opacity:.6}
-.node-edit-btn{position:absolute;top:4px;right:6px;font-size:10px;opacity:0;cursor:pointer;background:rgba(255,255,255,.7);border-radius:3px;padding:1px 4px;transition:opacity .1s}
-.node:hover .node-edit-btn{opacity:1}
+.nd{position:absolute;border-radius:9px;padding:10px 14px;min-width:110px;max-width:150px;text-align:center;cursor:grab;user-select:none;border:1.5px solid transparent;transition:box-shadow .15s}
+.nd:hover{box-shadow:0 4px 16px rgba(0,0,0,.13)}
+.nd.dragging{cursor:grabbing;box-shadow:0 8px 28px rgba(0,0,0,.22);z-index:999}
+.nd.selected{box-shadow:0 0 0 2.5px #534AB7}
+.nt{font-size:12px;font-weight:500;line-height:1.3}
+.nn{font-size:11px;margin-top:3px;opacity:.8;font-style:italic}
+.ns{font-size:10px;margin-top:2px;opacity:.6}
+.eb{position:absolute;top:4px;right:6px;font-size:10px;opacity:0;cursor:pointer;background:rgba(255,255,255,.7);border-radius:3px;padding:1px 4px}
+.nd:hover .eb{opacity:1}
 .c-purple{background:#EEEDFE;border-color:#534AB7;color:#3C3489}
 .c-teal{background:#E1F5EE;border-color:#0F6E56;color:#085041}
 .c-coral{background:#FAECE7;border-color:#993C1D;color:#712B13}
 .c-gray{background:#F1EFE8;border-color:#5F5E5A;color:#444441}
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:200}
-.modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:14px;box-shadow:0 12px 48px rgba(0,0,0,.22);padding:24px;width:300px;z-index:201}
-.modal h3{font-size:15px;font-weight:500;margin-bottom:16px}
-.modal label{font-size:11px;color:#888;display:block;margin-top:12px;margin-bottom:3px}
-.modal input,.modal select{width:100%;padding:7px 10px;border-radius:7px;border:1px solid #ddd;font-size:13px;outline:none}
-.modal input:focus,.modal select:focus{border-color:#534AB7}
-.modal-actions{display:flex;gap:8px;margin-top:20px}
-.modal-actions .btn{flex:1;text-align:center}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:200}
+.mo{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:14px;box-shadow:0 12px 48px rgba(0,0,0,.22);padding:24px;width:300px;z-index:201}
+.mo h3{font-size:15px;font-weight:500;margin-bottom:16px}
+.mo label{font-size:11px;color:#888;display:block;margin-top:12px;margin-bottom:3px}
+.mo input,.mo select{width:100%;padding:7px 10px;border-radius:7px;border:1px solid #ddd;font-size:13px}
+.ma{display:flex;gap:8px;margin-top:20px}
+.ma .btn{flex:1;text-align:center}
 #legend{position:fixed;bottom:12px;left:12px;background:#fff;border-radius:9px;padding:10px 14px;font-size:11px;color:#666;box-shadow:0 2px 10px rgba(0,0,0,.1);z-index:50}
 .leg{display:flex;align-items:center;gap:6px;margin-top:4px}
-.leg-dot{width:10px;height:10px;border-radius:3px}
+.ld{width:10px;height:10px;border-radius:3px}
 .lp{background:#EEEDFE;border:1px solid #534AB7}
 .lt{background:#E1F5EE;border:1px solid #0F6E56}
 .lc{background:#FAECE7;border:1px solid #993C1D}
 .lg{background:#F1EFE8;border:1px solid #5F5E5A}
-#zoom-info{position:fixed;bottom:12px;right:12px;font-size:11px;color:#aaa;background:#fff;padding:6px 10px;border-radius:7px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#zi{position:fixed;bottom:12px;right:12px;font-size:11px;color:#aaa;background:#fff;padding:6px 10px;border-radius:7px}
 </style>
 </head>
 <body>
-
 <div id="toolbar">
   <h1>Seminar-Organigramm</h1>
   <div class="sep"></div>
-  <button class="btn btn-primary" id="btnAdd">+ Rolle</button>
-  <button class="btn btn-danger" id="btnDel">Löschen</button>
+  <button class="btn btn-primary" id="bAdd">+ Rolle</button>
+  <button class="btn btn-danger" id="bDel">Löschen</button>
   <div class="sep"></div>
-  <button class="btn" id="btnReset">Ansicht zurücksetzen</button>
-  <button class="btn" id="btnPrint">Drucken</button>
+  <button class="btn" id="bReset">Ansicht zurücksetzen</button>
+  <button class="btn" id="bPrint">Drucken</button>
   <div class="sep"></div>
-  <button class="btn btn-primary" id="btnSave">💾 Speichern</button>
-  <label class="btn" style="cursor:pointer">📂 Laden<input type="file" id="btnLoad" accept=".json" style="display:none"/></label>
-  <span class="hint-bar">Ziehen = verschieben &nbsp;|&nbsp; Doppelklick = bearbeiten &nbsp;|&nbsp; Scroll = zoomen</span>
+  <button class="btn btn-primary" id="bSave">💾 Speichern</button>
+  <label class="btn" style="cursor:pointer">📂 Laden <input type="file" id="bLoad" accept=".json" style="display:none"></label>
+  <span class="hint-bar">Ziehen = verschieben | Doppelklick = bearbeiten | Scroll = zoomen</span>
 </div>
-
 <div id="canvas">
-  <div id="world">
-    <svg id="lines"></svg>
-  </div>
+  <div id="world"><svg id="lines"></svg></div>
 </div>
-
 <div id="legend">
-  <strong style="font-size:11px">Legende</strong>
-  <div class="leg"><div class="leg-dot lp"></div> Schulorganisator</div>
-  <div class="leg"><div class="leg-dot lt"></div> Bereichsleiter</div>
-  <div class="leg"><div class="leg-dot lc"></div> Teamverantw.</div>
-  <div class="leg"><div class="leg-dot lg"></div> Helfer / Verantw.</div>
+  <strong>Legende</strong>
+  <div class="leg"><div class="ld lp"></div> Schulorganisator</div>
+  <div class="leg"><div class="ld lt"></div> Bereichsleiter</div>
+  <div class="leg"><div class="ld lc"></div> Teamverantw.</div>
+  <div class="leg"><div class="ld lg"></div> Helfer / Verantw.</div>
 </div>
-<div id="zoom-info">100%</div>
-
-<div class="overlay" id="overlay"></div>
-<div class="modal" id="modal">
+<div id="zi">100%</div>
+<div class="ov" id="ov"></div>
+<div class="mo" id="mo">
   <h3>Rolle bearbeiten</h3>
-  <label>Rollenbezeichnung</label><input id="m-title" type="text"/>
-  <label>Name der Person</label><input id="m-name" type="text" placeholder="z.B. Max Mustermann"/>
-  <label>Zusatzinfo</label><input id="m-sub" type="text"/>
+  <label>Rollenbezeichnung</label><input id="eT" type="text">
+  <label>Name der Person</label><input id="eN" type="text" placeholder="z.B. Max Mustermann">
+  <label>Zusatzinfo</label><input id="eS" type="text">
   <label>Farbe</label>
-  <select id="m-color">
+  <select id="eC">
     <option value="c-purple">Lila – Schulorganisator</option>
     <option value="c-teal">Grün – Bereichsleiter</option>
     <option value="c-coral">Orange – Teamverantw.</option>
     <option value="c-gray">Grau – Helfer</option>
   </select>
-  <div class="modal-actions">
-    <button class="btn btn-primary" id="btnSaveModal">Speichern</button>
-    <button class="btn" id="btnCloseModal">Abbrechen</button>
+  <div class="ma">
+    <button class="btn btn-primary" id="bSaveMo">Speichern</button>
+    <button class="btn" id="bCloseMo">Abbrechen</button>
   </div>
 </div>
-
 <script>
-var state = {
+var S = {
   nodes: [
-    {id:1,  x:330, y:30,  title:'Schulorganisator',       name:'', sub:'Gesamtverantwortung', color:'c-purple'},
-    {id:2,  x:30,  y:160, title:'Technik & Schulungsraum', name:'', sub:'Bereichsleiter',      color:'c-teal'},
-    {id:3,  x:170, y:160, title:'Verpflegung',             name:'', sub:'Bereichsleiter',      color:'c-teal'},
-    {id:4,  x:340, y:160, title:'Unterkünfte',             name:'', sub:'Bereichsleiter',      color:'c-teal'},
-    {id:5,  x:500, y:160, title:'Geschenke',               name:'', sub:'Bereichsleiter',      color:'c-teal'},
-    {id:6,  x:630, y:160, title:'Predigtdienst',           name:'', sub:'Bereichsleiter',      color:'c-teal'},
-    {id:7,  x:20,  y:300, title:'Techniker',               name:'', sub:'Auf-/Abbau',          color:'c-gray'},
-    {id:8,  x:140, y:300, title:'Raumverantw.',            name:'', sub:'',                    color:'c-gray'},
-    {id:9,  x:130, y:300, title:'Einkauf',                 name:'', sub:'Teamverantw.',        color:'c-coral'},
-    {id:10, x:240, y:300, title:'Kochen',                  name:'', sub:'Teamverantw.',        color:'c-coral'},
-    {id:11, x:330, y:300, title:'Ausgabe',                 name:'', sub:'Teamverantw.',        color:'c-coral'},
-    {id:12, x:420, y:300, title:'Reinigung',               name:'', sub:'Teamverantw.',        color:'c-coral'},
-    {id:13, x:320, y:300, title:'Koord. Gastgeber',        name:'', sub:'',                    color:'c-gray'},
-    {id:14, x:440, y:300, title:'Kontakt Schüler',         name:'', sub:'',                    color:'c-gray'},
-    {id:15, x:500, y:300, title:'Einkauf & Verteilung',    name:'', sub:'',                    color:'c-gray'},
-    {id:16, x:600, y:300, title:'Terminplaner',            name:'', sub:'',                    color:'c-gray'},
-    {id:17, x:710, y:300, title:'Fahrer / Begleitung',     name:'', sub:'',                    color:'c-gray'},
-    {id:18, x:120, y:440, title:'1–2 Helfer',              name:'', sub:'Einkauf',             color:'c-gray'},
-    {id:19, x:230, y:440, title:'2–3 Helfer',              name:'', sub:'Kochteam',            color:'c-gray'},
-    {id:20, x:320, y:440, title:'1 Bruder',                name:'', sub:'täglich anwesend',    color:'c-gray'},
-    {id:21, x:410, y:440, title:'1–2 Helfer',              name:'', sub:'Reinigung',           color:'c-gray'},
+    {id:1,  x:330,y:30,  title:"Schulorganisator",       name:"",sub:"Gesamtverantwortung",color:"c-purple"},
+    {id:2,  x:30, y:160, title:"Technik & Schulungsraum",name:"",sub:"Bereichsleiter",     color:"c-teal"},
+    {id:3,  x:170,y:160, title:"Verpflegung",            name:"",sub:"Bereichsleiter",     color:"c-teal"},
+    {id:4,  x:340,y:160, title:"Unterkünfte",            name:"",sub:"Bereichsleiter",     color:"c-teal"},
+    {id:5,  x:500,y:160, title:"Geschenke",              name:"",sub:"Bereichsleiter",     color:"c-teal"},
+    {id:6,  x:630,y:160, title:"Predigtdienst",          name:"",sub:"Bereichsleiter",     color:"c-teal"},
+    {id:7,  x:20, y:300, title:"Techniker",              name:"",sub:"Auf-/Abbau",         color:"c-gray"},
+    {id:8,  x:140,y:300, title:"Raumverantw.",           name:"",sub:"",                   color:"c-gray"},
+    {id:9,  x:130,y:300, title:"Einkauf",                name:"",sub:"Teamverantw.",       color:"c-coral"},
+    {id:10, x:240,y:300, title:"Kochen",                 name:"",sub:"Teamverantw.",       color:"c-coral"},
+    {id:11, x:330,y:300, title:"Ausgabe",                name:"",sub:"Teamverantw.",       color:"c-coral"},
+    {id:12, x:420,y:300, title:"Reinigung",              name:"",sub:"Teamverantw.",       color:"c-coral"},
+    {id:13, x:320,y:300, title:"Koord. Gastgeber",       name:"",sub:"",                   color:"c-gray"},
+    {id:14, x:440,y:300, title:"Kontakt Schüler",        name:"",sub:"",                   color:"c-gray"},
+    {id:15, x:500,y:300, title:"Einkauf & Verteilung",   name:"",sub:"",                   color:"c-gray"},
+    {id:16, x:600,y:300, title:"Terminplaner",           name:"",sub:"",                   color:"c-gray"},
+    {id:17, x:710,y:300, title:"Fahrer / Begleitung",    name:"",sub:"",                   color:"c-gray"},
+    {id:18, x:120,y:440, title:"1-2 Helfer",             name:"",sub:"Einkauf",            color:"c-gray"},
+    {id:19, x:230,y:440, title:"2-3 Helfer",             name:"",sub:"Kochteam",           color:"c-gray"},
+    {id:20, x:320,y:440, title:"1 Bruder",               name:"",sub:"taeglich anwesend",  color:"c-gray"},
+    {id:21, x:410,y:440, title:"1-2 Helfer",             name:"",sub:"Reinigung",          color:"c-gray"}
   ],
-  edges: [
-    [1,2],[1,3],[1,4],[1,5],[1,6],
-    [2,7],[2,8],
-    [3,9],[3,10],[3,11],[3,12],
-    [4,13],[4,14],
-    [5,15],
-    [6,16],[6,17],
-    [9,18],[10,19],[11,20],[12,21],
-  ],
+  edges: [[1,2],[1,3],[1,4],[1,5],[1,6],[2,7],[2,8],[3,9],[3,10],[3,11],[3,12],[4,13],[4,14],[5,15],[6,16],[6,17],[9,18],[10,19],[11,20],[12,21]],
   nextId: 22
 };
 
-var selId = null, editId = null;
-var pan = {x:40, y:20}, zoom = 1;
-var drag = null, panDrag = null;
+var sel=null, editId=null, dragObj=null, panObj=null;
+var pan={x:40,y:20}, zoom=1;
+var world=document.getElementById("world");
+var canvas=document.getElementById("canvas");
+var svgEl=document.getElementById("lines");
 
-var world = document.getElementById('world');
-var canvas = document.getElementById('canvas');
-var svg = document.getElementById('lines');
+function nW(n){ return Math.max(110,Math.min(150,n.title.length*8+28)); }
+function nH(n){ return n.name?70:n.sub?58:44; }
+function getNode(id){ for(var i=0;i<S.nodes.length;i++){ if(S.nodes[i].id===id) return S.nodes[i]; } return null; }
 
-function nW(n){ return Math.max(110, Math.min(150, n.title.length*8+28)); }
-function nH(n){ return n.name ? 70 : n.sub ? 58 : 44; }
+function render(){
+  var els=world.querySelectorAll(".nd");
+  for(var i=0;i<els.length;i++) els[i].remove();
+  svgEl.innerHTML="";
+  svgEl.style.width="3000px";
+  svgEl.style.height="2000px";
 
-function render() {
-  world.querySelectorAll('.node').forEach(function(e){ e.remove(); });
-  svg.innerHTML = '';
+  for(var e=0;e<S.edges.length;e++){
+    var a=getNode(S.edges[e][0]);
+    var b=getNode(S.edges[e][1]);
+    if(!a||!b) continue;
+    var ax=a.x+nW(a)/2, ay=a.y+nH(a);
+    var bx=b.x+nW(b)/2, by=b.y;
+    var my=ay+(by-ay)*0.5;
+    var p=document.createElementNS("http://www.w3.org/2000/svg","path");
+    p.setAttribute("d","M"+ax+","+ay+" C"+ax+","+my+" "+bx+","+my+" "+bx+","+by);
+    p.setAttribute("fill","none");
+    p.setAttribute("stroke","#bbb");
+    p.setAttribute("stroke-width","1.5");
+    svgEl.appendChild(p);
+  }
 
-  // draw edges
-  svg.style.width='3000px'; svg.style.height='2000px';
-  state.edges.forEach(function(edge) {
-    var a = state.nodes.filter(function(x){ return x.id===edge[0]; })[0];
-    var b = state.nodes.filter(function(x){ return x.id===edge[1]; })[0];
-    if (!a||!b) return;
-    var ax=a.x+nW(a)/2, ay=a.y+nH(a), bx=b.x+nW(b)/2, by=b.y, my=ay+(by-ay)*0.5;
-    var path=document.createElementNS('http://www.w3.org/2000/svg','path');
-    path.setAttribute('d','M'+ax+','+ay+' C'+ax+','+my+' '+bx+','+my+' '+bx+','+by);
-    path.setAttribute('fill','none'); path.setAttribute('stroke','#bbb'); path.setAttribute('stroke-width','1.5');
-    svg.appendChild(path);
-  });
-
-  // draw nodes
-  state.nodes.forEach(function(n) {
-    var el=document.createElement('div');
-    el.className='node '+n.color+(selId===n.id?' selected':'');
-    el.style.left=n.x+'px'; el.style.top=n.y+'px'; el.style.width=nW(n)+'px';
-    el.innerHTML='<span class="node-edit-btn" data-id="'+n.id+'">✎</span>'+
-      '<div class="node-title">'+n.title+'</div>'+
-      (n.name?'<div class="node-name">'+n.name+'</div>':'')+
-      (n.sub?'<div class="node-sub">'+n.sub+'</div>':'');
-    el.addEventListener('mousedown', function(e){ startDrag(e,n.id); });
-    el.addEventListener('dblclick', function(e){ e.stopPropagation(); openModal(n.id); });
-    el.addEventListener('click', function(e){ e.stopPropagation(); selId=n.id; render(); });
-    el.querySelector('.node-edit-btn').addEventListener('click', function(e){ e.stopPropagation(); openModal(n.id); });
+  for(var n=0;n<S.nodes.length;n++){
+    var nd=S.nodes[n];
+    var el=document.createElement("div");
+    el.className="nd "+nd.color+(sel===nd.id?" selected":"");
+    el.style.left=nd.x+"px";
+    el.style.top=nd.y+"px";
+    el.style.width=nW(nd)+"px";
+    var html="<span class='eb' data-id='"+nd.id+"'>pencil</span>";
+    html+="<div class='nt'>"+nd.title+"</div>";
+    if(nd.name) html+="<div class='nn'>"+nd.name+"</div>";
+    if(nd.sub)  html+="<div class='ns'>"+nd.sub+"</div>";
+    el.innerHTML=html;
+    el.querySelector(".eb").textContent="✎";
+    (function(id){
+      el.addEventListener("mousedown",function(ev){ startDrag(ev,id); });
+      el.addEventListener("dblclick",function(ev){ ev.stopPropagation(); openMo(id); });
+      el.addEventListener("click",function(ev){ ev.stopPropagation(); sel=id; render(); });
+      el.querySelector(".eb").addEventListener("click",function(ev){ ev.stopPropagation(); openMo(id); });
+    })(nd.id);
     world.appendChild(el);
-  });
+  }
 
-  world.style.transform='translate('+pan.x+'px,'+pan.y+'px) scale('+zoom+')';
-  document.getElementById('zoom-info').textContent=Math.round(zoom*100)+'%';
+  world.style.transform="translate("+pan.x+"px,"+pan.y+"px) scale("+zoom+")";
+  document.getElementById("zi").textContent=Math.round(zoom*100)+"%";
 }
 
-function startDrag(e,id) {
-  if(e.button!==0) return;
-  e.stopPropagation();
-  var n=state.nodes.filter(function(x){ return x.id===id; })[0];
-  selId=id;
-  drag={id:id, startX:e.clientX, startY:e.clientY, ox:n.x, oy:n.y};
-  document.getElementById('n'+id) && document.getElementById('n'+id).classList.add('dragging');
+function startDrag(ev,id){
+  if(ev.button!==0) return;
+  ev.stopPropagation();
+  var nd=getNode(id);
+  sel=id;
+  dragObj={id:id,sx:ev.clientX,sy:ev.clientY,ox:nd.x,oy:nd.y};
   render();
 }
 
-document.addEventListener('mousemove', function(e) {
-  if (drag) {
-    var n=state.nodes.filter(function(x){ return x.id===drag.id; })[0];
-    n.x=drag.ox+(e.clientX-drag.startX)/zoom;
-    n.y=drag.oy+(e.clientY-drag.startY)/zoom;
+document.addEventListener("mousemove",function(ev){
+  if(dragObj){
+    var nd=getNode(dragObj.id);
+    nd.x=dragObj.ox+(ev.clientX-dragObj.sx)/zoom;
+    nd.y=dragObj.oy+(ev.clientY-dragObj.sy)/zoom;
     render();
   }
-  if (panDrag) {
-    pan.x=panDrag.ox+(e.clientX-panDrag.startX);
-    pan.y=panDrag.oy+(e.clientY-panDrag.startY);
-    world.style.transform='translate('+pan.x+'px,'+pan.y+'px) scale('+zoom+')';
+  if(panObj){
+    pan.x=panObj.ox+(ev.clientX-panObj.sx);
+    pan.y=panObj.oy+(ev.clientY-panObj.sy);
+    world.style.transform="translate("+pan.x+"px,"+pan.y+"px) scale("+zoom+")";
   }
 });
 
-document.addEventListener('mouseup', function() {
-  drag=null; panDrag=null;
-  canvas.classList.remove('grabbing');
+document.addEventListener("mouseup",function(){
+  dragObj=null; panObj=null;
+  canvas.classList.remove("grabbing");
 });
 
-canvas.addEventListener('mousedown', function(e) {
-  if(e.button===0&&!drag) {
-    panDrag={startX:e.clientX,startY:e.clientY,ox:pan.x,oy:pan.y};
-    canvas.classList.add('grabbing');
-    selId=null; render();
+canvas.addEventListener("mousedown",function(ev){
+  if(ev.button===0&&!dragObj){
+    panObj={sx:ev.clientX,sy:ev.clientY,ox:pan.x,oy:pan.y};
+    canvas.classList.add("grabbing");
+    sel=null; render();
   }
 });
 
-canvas.addEventListener('wheel', function(e) {
-  e.preventDefault();
-  var delta=e.deltaY>0?0.9:1.1;
-  var rect=canvas.getBoundingClientRect();
-  var mx=e.clientX-rect.left, my=e.clientY-rect.top;
-  pan.x=mx-(mx-pan.x)*delta; pan.y=my-(my-pan.y)*delta;
-  zoom=Math.max(0.3,Math.min(2.5,zoom*delta));
-  world.style.transform='translate('+pan.x+'px,'+pan.y+'px) scale('+zoom+')';
-  document.getElementById('zoom-info').textContent=Math.round(zoom*100)+'%';
+canvas.addEventListener("wheel",function(ev){
+  ev.preventDefault();
+  var d=ev.deltaY>0?0.9:1.1;
+  var r=canvas.getBoundingClientRect();
+  var mx=ev.clientX-r.left, my=ev.clientY-r.top;
+  pan.x=mx-(mx-pan.x)*d; pan.y=my-(my-pan.y)*d;
+  zoom=Math.max(0.3,Math.min(2.5,zoom*d));
+  world.style.transform="translate("+pan.x+"px,"+pan.y+"px) scale("+zoom+")";
+  document.getElementById("zi").textContent=Math.round(zoom*100)+"%";
 },{passive:false});
 
-function openModal(id) {
-  var n=state.nodes.filter(function(x){ return x.id===id; })[0];
-  editId=id;
-  document.getElementById('m-title').value=n.title;
-  document.getElementById('m-name').value=n.name;
-  document.getElementById('m-sub').value=n.sub;
-  document.getElementById('m-color').value=n.color;
-  document.getElementById('modal').style.display='block';
-  document.getElementById('overlay').style.display='block';
-  setTimeout(function(){ document.getElementById('m-name').focus(); },50);
+function openMo(id){
+  var nd=getNode(id); editId=id;
+  document.getElementById("eT").value=nd.title;
+  document.getElementById("eN").value=nd.name;
+  document.getElementById("eS").value=nd.sub;
+  document.getElementById("eC").value=nd.color;
+  document.getElementById("mo").style.display="block";
+  document.getElementById("ov").style.display="block";
 }
-
-function closeModal() {
-  document.getElementById('modal').style.display='none';
-  document.getElementById('overlay').style.display='none';
+function closeMo(){
+  document.getElementById("mo").style.display="none";
+  document.getElementById("ov").style.display="none";
 }
+document.getElementById("ov").onclick=closeMo;
+document.getElementById("bCloseMo").onclick=closeMo;
+document.getElementById("bSaveMo").onclick=function(){
+  var nd=getNode(editId);
+  nd.title=document.getElementById("eT").value||nd.title;
+  nd.name=document.getElementById("eN").value;
+  nd.sub=document.getElementById("eS").value;
+  nd.color=document.getElementById("eC").value;
+  closeMo(); render();
+};
 
-document.getElementById('overlay').addEventListener('click', closeModal);
-document.getElementById('btnCloseModal').addEventListener('click', closeModal);
-document.getElementById('btnSaveModal').addEventListener('click', function() {
-  var n=state.nodes.filter(function(x){ return x.id===editId; })[0];
-  n.title=document.getElementById('m-title').value||n.title;
-  n.name=document.getElementById('m-name').value;
-  n.sub=document.getElementById('m-sub').value;
-  n.color=document.getElementById('m-color').value;
-  closeModal(); render();
-});
+document.getElementById("bDel").onclick=function(){
+  if(!sel||sel===1){ alert("Bitte zuerst eine Rolle anklicken."); return; }
+  if(!confirm("Rolle wirklich löschen?")) return;
+  var newNodes=[]; for(var i=0;i<S.nodes.length;i++){ if(S.nodes[i].id!==sel) newNodes.push(S.nodes[i]); }
+  var newEdges=[]; for(var i=0;i<S.edges.length;i++){ if(S.edges[i][0]!==sel&&S.edges[i][1]!==sel) newEdges.push(S.edges[i]); }
+  S.nodes=newNodes; S.edges=newEdges; sel=null; render();
+};
 
-document.getElementById('btnDel').addEventListener('click', function() {
-  if(!selId||selId===1){ alert('Bitte zuerst eine Rolle anklicken.'); return; }
-  if(!confirm('Rolle wirklich löschen?')) return;
-  state.nodes=state.nodes.filter(function(x){ return x.id!==selId; });
-  state.edges=state.edges.filter(function(e){ return e[0]!==selId&&e[1]!==selId; });
-  selId=null; render();
-});
-
-document.getElementById('btnAdd').addEventListener('click', function() {
-  var title=prompt('Rollenbezeichnung:'); if(!title) return;
-  var name=prompt('Name (optional):')||'';
-  var sub=prompt('Zusatzinfo (optional):')||'';
-  var cv=prompt('Farbe:\n1=Lila\n2=Grün\n3=Orange\n4=Grau')||'4';
-  var colors={'1':'c-purple','2':'c-teal','3':'c-coral','4':'c-gray'};
-  var color=colors[cv]||'c-gray';
-  var pid=parseInt(prompt('ID der übergeordneten Rolle:\n'+state.nodes.map(function(n){ return n.id+': '+n.title; }).join('\n')));
-  var newNode={id:state.nextId++, x:200+Math.random()*200, y:200+Math.random()*100, title:title, name:name, sub:sub, color:color};
-  state.nodes.push(newNode);
-  if(pid&&state.nodes.filter(function(x){ return x.id===pid; }).length) state.edges.push([pid,newNode.id]);
+document.getElementById("bAdd").onclick=function(){
+  var title=prompt("Rollenbezeichnung:"); if(!title) return;
+  var name=prompt("Name (optional):")||"";
+  var sub=prompt("Zusatzinfo (optional):")||"";
+  var cv=prompt("Farbe:\n1=Lila\n2=Grün\n3=Orange\n4=Grau")||"4";
+  var cols={"1":"c-purple","2":"c-teal","3":"c-coral","4":"c-gray"};
+  var pids=S.nodes.map(function(n){ return n.id+": "+n.title; }).join("\n");
+  var pid=parseInt(prompt("ID der übergeordneten Rolle:\n"+pids));
+  var nn={id:S.nextId++,x:200+Math.random()*200,y:200,title:title,name:name,sub:sub,color:cols[cv]||"c-gray"};
+  S.nodes.push(nn);
+  if(pid&&getNode(pid)) S.edges.push([pid,nn.id]);
   render();
-});
+};
 
-document.getElementById('btnReset').addEventListener('click', function() {
-  pan={x:40,y:20}; zoom=1; render();
-});
+document.getElementById("bReset").onclick=function(){ pan={x:40,y:20}; zoom=1; render(); };
+document.getElementById("bPrint").onclick=function(){ window.print(); };
 
-document.getElementById('btnPrint').addEventListener('click', function() {
-  window.print();
-});
-
-document.getElementById('btnSave').onclick = function() {
-  var json=JSON.stringify({nodes:state.nodes, edges:state.edges, nextId:state.nextId}, null, 2);
-  var blob=new Blob([json],{type:'application/json'});
-  var a=document.createElement('a');
+document.getElementById("bSave").onclick=function(){
+  var json=JSON.stringify(S,null,2);
+  var blob=new Blob([json],{type:"application/json"});
+  var a=document.createElement("a");
   a.href=URL.createObjectURL(blob);
-  a.download='organigramm-stand.json';
+  a.download="organigramm.json";
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-});
+};
 
-document.getElementById('btnLoad').onchange = function(e) {
-  var file=e.target.files[0];
+document.getElementById("bLoad").onchange=function(ev){
+  var file=ev.target.files[0];
   if(!file) return;
   var reader=new FileReader();
-  reader.onload=function(ev) {
-    try {
-      var d=JSON.parse(ev.target.result);
-      state.nodes=d.nodes;
-      state.edges=d.edges;
-      state.nextId=d.nextId||Math.max.apply(null,d.nodes.map(function(n){ return n.id; }))+1;
-      selId=null;
+  reader.onload=function(e){
+    try{
+      var d=JSON.parse(e.target.result);
+      S.nodes=d.nodes;
+      S.edges=d.edges;
+      S.nextId=d.nextId||100;
+      sel=null;
       render();
-    } catch(err) {
-      alert('Fehler beim Laden: '+err.message);
-    }
+    }catch(err){ alert("Fehler: "+err.message); }
   };
   reader.readAsText(file);
-  e.target.value='';
-});
+  ev.target.value="";
+};
 
 render();
 </script>
