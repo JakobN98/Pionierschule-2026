@@ -148,7 +148,7 @@ var S = {
   nextId: 22
 };
 
-var history = [];
+var undoStack = [];
 var sel=null, editId=null, dragObj=null, panObj=null;
 var pan={x:40,y:20}, zoom=1;
 var world=document.getElementById("world");
@@ -156,7 +156,7 @@ var canvas=document.getElementById("canvas");
 var svgEl=document.getElementById("lines");
 
 function deepCopy(obj){ return JSON.parse(JSON.stringify(obj)); }
-function saveHistory(){ history.push(deepCopy(S)); if(history.length>50) history.shift(); }
+function saveHistory(){ undoStack.push(deepCopy(S)); if(undoStack.length>50) undoStack.shift(); }
 
 function getNode(id){
   for(var i=0;i<S.nodes.length;i++){ if(S.nodes[i].id===id) return S.nodes[i]; }
@@ -320,8 +320,8 @@ document.getElementById("bDel").onclick=function(){
 };
 
 document.getElementById("bUndo").onclick=function(){
-  if(history.length===0){ alert("Nichts zum Rueckgaengig machen."); return; }
-  var prev=history.pop();
+  if(undoStack.length===0){ alert("Nichts zum Rueckgaengig machen."); return; }
+  var prev=undoStack.pop();
   S.nodes=prev.nodes; S.edges=prev.edges; S.nextId=prev.nextId;
   sel=null; render();
 };
