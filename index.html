@@ -230,12 +230,18 @@ function startDrag(e, id) {
   selId = id;
   drag = { id, startX: e.clientX, startY: e.clientY, ox: n.x, oy: n.y };
   document.getElementById('n'+id).classList.add('dragging');
-  function exportData() {
-  const blob = new Blob([JSON.stringify({nodes, edges}, null, 2)], {type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'organigramm-stand.json';
-  a.click();
+  render();
+
+function exportData() {
+  try {
+    const blob = new Blob([JSON.stringify({nodes, edges}, null, 2)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'organigramm-stand.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  } catch(err) { alert('Fehler beim Speichern: ' + err.message); }
 }
 
 function importData(e) {
@@ -249,15 +255,11 @@ function importData(e) {
       edges.splice(0, edges.length, ...d.edges);
       nextId = Math.max(...nodes.map(n=>n.id)) + 1;
       render();
-    } catch {
-      alert('Datei konnte nicht geladen werden.');
-    }
+    } catch(err) { alert('Datei konnte nicht geladen werden: ' + err.message); }
   };
   reader.readAsText(file);
   e.target.value = '';
 }
-
-render();
 }
 document.addEventListener('mousemove', e => {
   if (drag) {
