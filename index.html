@@ -7,39 +7,44 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,sans-serif;background:#f0efe9;overflow:hidden;height:100vh;width:100vw}
-#toolbar{position:fixed;top:0;left:0;right:0;height:48px;background:#fff;border-bottom:1px solid #e0dfd8;display:flex;align-items:center;padding:0 16px;gap:8px;z-index:50;flex-wrap:wrap}
-#toolbar h1{font-size:14px;font-weight:500;color:#333;margin-right:8px}
-.btn{padding:6px 12px;border-radius:6px;border:1px solid #ccc;background:#fff;font-size:12px;cursor:pointer;white-space:nowrap}
+#toolbar{position:fixed;top:0;left:0;right:0;height:48px;background:#fff;border-bottom:1px solid #e0dfd8;display:flex;align-items:center;padding:0 12px;gap:6px;z-index:50;flex-wrap:wrap}
+#toolbar h1{font-size:14px;font-weight:500;color:#333;margin-right:4px}
+.btn{padding:6px 11px;border-radius:6px;border:1px solid #ccc;background:#fff;font-size:12px;cursor:pointer;white-space:nowrap}
 .btn:hover{background:#f5f4f0}
 .btn-primary{background:#534AB7;color:#fff;border-color:#534AB7}
 .btn-primary:hover{background:#3C3489}
 .btn-danger{color:#A32D2D;border-color:#E24B4A}
 .btn-danger:hover{background:#FCEBEB}
-.sep{width:1px;height:24px;background:#e0dfd8;margin:0 4px}
+.btn-undo{color:#555}
+.sep{width:1px;height:24px;background:#e0dfd8;margin:0 2px}
 .hint-bar{font-size:11px;color:#aaa;margin-left:auto}
 #canvas{position:fixed;top:48px;left:0;right:0;bottom:0;overflow:hidden;cursor:grab}
 #canvas.grabbing{cursor:grabbing}
 #world{position:absolute;top:0;left:0;transform-origin:0 0}
 svg#lines{position:absolute;top:0;left:0;overflow:visible;pointer-events:none;width:3000px;height:2000px}
-.nd{position:absolute;border-radius:9px;padding:10px 14px;min-width:110px;max-width:150px;text-align:center;cursor:grab;user-select:none;border:1.5px solid transparent;transition:box-shadow .15s}
+.nd{position:absolute;border-radius:9px;padding:8px 12px;min-width:110px;max-width:155px;text-align:center;cursor:grab;user-select:none;border:1.5px solid transparent;transition:box-shadow .15s}
 .nd:hover{box-shadow:0 4px 16px rgba(0,0,0,.13)}
 .nd.dragging{cursor:grabbing;box-shadow:0 8px 28px rgba(0,0,0,.22);z-index:999}
 .nd.selected{box-shadow:0 0 0 2.5px #534AB7}
 .nt{font-size:12px;font-weight:500;line-height:1.3}
-.nn{font-size:11px;margin-top:3px;opacity:.8;font-style:italic}
-.ns{font-size:10px;margin-top:2px;opacity:.6}
-.eb{position:absolute;top:4px;right:6px;font-size:10px;opacity:0;cursor:pointer;background:rgba(255,255,255,.7);border-radius:3px;padding:1px 4px}
+.nn{font-size:11px;margin-top:2px;opacity:.85;font-style:italic}
+.nph{font-size:10px;margin-top:1px;opacity:.65}
+.ns{font-size:10px;margin-top:1px;opacity:.6}
+.eb{position:absolute;top:3px;right:5px;font-size:10px;opacity:0;cursor:pointer;background:rgba(255,255,255,.8);border-radius:3px;padding:1px 4px}
 .nd:hover .eb{opacity:1}
+.status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:middle}
+.s-open{background:#E24B4A}
+.s-filled{background:#1D9E75}
 .c-purple{background:#EEEDFE;border-color:#534AB7;color:#3C3489}
 .c-teal{background:#E1F5EE;border-color:#0F6E56;color:#085041}
 .c-coral{background:#FAECE7;border-color:#993C1D;color:#712B13}
 .c-gray{background:#F1EFE8;border-color:#5F5E5A;color:#444441}
 .ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:200}
-.mo{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:14px;box-shadow:0 12px 48px rgba(0,0,0,.22);padding:24px;width:300px;z-index:201}
-.mo h3{font-size:15px;font-weight:500;margin-bottom:16px}
-.mo label{font-size:11px;color:#888;display:block;margin-top:12px;margin-bottom:3px}
+.mo{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:14px;box-shadow:0 12px 48px rgba(0,0,0,.22);padding:24px;width:310px;z-index:201}
+.mo h3{font-size:15px;font-weight:500;margin-bottom:14px}
+.mo label{font-size:11px;color:#888;display:block;margin-top:10px;margin-bottom:3px}
 .mo input,.mo select{width:100%;padding:7px 10px;border-radius:7px;border:1px solid #ddd;font-size:13px}
-.ma{display:flex;gap:8px;margin-top:20px}
+.ma{display:flex;gap:8px;margin-top:18px}
 .ma .btn{flex:1;text-align:center}
 #legend{position:fixed;bottom:12px;left:12px;background:#fff;border-radius:9px;padding:10px 14px;font-size:11px;color:#666;box-shadow:0 2px 10px rgba(0,0,0,.1);z-index:50}
 .leg{display:flex;align-items:center;gap:6px;margin-top:4px}
@@ -48,7 +53,11 @@ svg#lines{position:absolute;top:0;left:0;overflow:visible;pointer-events:none;wi
 .lt{background:#E1F5EE;border:1px solid #0F6E56}
 .lc{background:#FAECE7;border:1px solid #993C1D}
 .lg{background:#F1EFE8;border:1px solid #5F5E5A}
-#zi{position:fixed;bottom:12px;right:12px;font-size:11px;color:#aaa;background:#fff;padding:6px 10px;border-radius:7px}
+.leg-status{margin-top:8px;padding-top:8px;border-top:1px solid #eee}
+#zi{position:fixed;bottom:12px;right:12px;font-size:11px;color:#aaa;background:#fff;padding:6px 10px;border-radius:7px;display:flex;gap:6px;align-items:center}
+#zi button{border:1px solid #ddd;background:#fff;border-radius:4px;width:22px;height:22px;cursor:pointer;font-size:13px;line-height:1}
+#zi button:hover{background:#f0efe9}
+@media print{#toolbar,#legend,#zi,.eb{display:none!important} body,#canvas{overflow:visible!important;position:static!important;height:auto!important} #world{transform:none!important;position:static!important}}
 </style>
 </head>
 <body>
@@ -57,7 +66,9 @@ svg#lines{position:absolute;top:0;left:0;overflow:visible;pointer-events:none;wi
   <div class="sep"></div>
   <button class="btn btn-primary" id="bAdd">+ Rolle</button>
   <button class="btn btn-danger" id="bDel">Löschen</button>
+  <button class="btn btn-undo" id="bUndo" title="Strg+Z">↩ Rückgängig</button>
   <div class="sep"></div>
+  <button class="btn" id="bLayout">Auto-Layout</button>
   <button class="btn" id="bReset">Ansicht zurücksetzen</button>
   <button class="btn" id="bPrint">Drucken</button>
   <div class="sep"></div>
@@ -74,14 +85,28 @@ svg#lines{position:absolute;top:0;left:0;overflow:visible;pointer-events:none;wi
   <div class="leg"><div class="ld lt"></div> Bereichsleiter</div>
   <div class="leg"><div class="ld lc"></div> Teamverantw.</div>
   <div class="leg"><div class="ld lg"></div> Helfer / Verantw.</div>
+  <div class="leg-status">
+    <div class="leg"><span class="status-dot s-filled"></span> Besetzt</div>
+    <div class="leg"><span class="status-dot s-open"></span> Offen</div>
+  </div>
 </div>
-<div id="zi">100%</div>
+<div id="zi">
+  <button id="bZoomOut">-</button>
+  <span id="ziTxt">100%</span>
+  <button id="bZoomIn">+</button>
+</div>
 <div class="ov" id="ov"></div>
 <div class="mo" id="mo">
   <h3>Rolle bearbeiten</h3>
   <label>Rollenbezeichnung</label><input id="eT" type="text">
   <label>Name der Person</label><input id="eN" type="text" placeholder="z.B. Max Mustermann">
+  <label>Telefon / Kontakt</label><input id="ePh" type="text" placeholder="z.B. 0151 12345678">
   <label>Zusatzinfo</label><input id="eS" type="text">
+  <label>Status</label>
+  <select id="eSt">
+    <option value="open">Offen</option>
+    <option value="filled">Besetzt</option>
+  </select>
   <label>Farbe</label>
   <select id="eC">
     <option value="c-purple">Lila – Schulorganisator</option>
@@ -97,48 +122,61 @@ svg#lines{position:absolute;top:0;left:0;overflow:visible;pointer-events:none;wi
 <script>
 var S = {
   nodes: [
-    {id:1,  x:330,y:30,  title:"Schulorganisator",       name:"",sub:"Gesamtverantwortung",color:"c-purple"},
-    {id:2,  x:30, y:160, title:"Technik & Schulungsraum",name:"",sub:"Bereichsleiter",     color:"c-teal"},
-    {id:3,  x:170,y:160, title:"Verpflegung",            name:"",sub:"Bereichsleiter",     color:"c-teal"},
-    {id:4,  x:340,y:160, title:"Unterkünfte",            name:"",sub:"Bereichsleiter",     color:"c-teal"},
-    {id:5,  x:500,y:160, title:"Geschenke",              name:"",sub:"Bereichsleiter",     color:"c-teal"},
-    {id:6,  x:630,y:160, title:"Predigtdienst",          name:"",sub:"Bereichsleiter",     color:"c-teal"},
-    {id:7,  x:20, y:300, title:"Techniker",              name:"",sub:"Auf-/Abbau",         color:"c-gray"},
-    {id:8,  x:140,y:300, title:"Raumverantw.",           name:"",sub:"",                   color:"c-gray"},
-    {id:9,  x:130,y:300, title:"Einkauf",                name:"",sub:"Teamverantw.",       color:"c-coral"},
-    {id:10, x:240,y:300, title:"Kochen",                 name:"",sub:"Teamverantw.",       color:"c-coral"},
-    {id:11, x:330,y:300, title:"Ausgabe",                name:"",sub:"Teamverantw.",       color:"c-coral"},
-    {id:12, x:420,y:300, title:"Reinigung",              name:"",sub:"Teamverantw.",       color:"c-coral"},
-    {id:13, x:320,y:300, title:"Koord. Gastgeber",       name:"",sub:"",                   color:"c-gray"},
-    {id:14, x:440,y:300, title:"Kontakt Schüler",        name:"",sub:"",                   color:"c-gray"},
-    {id:15, x:500,y:300, title:"Einkauf & Verteilung",   name:"",sub:"",                   color:"c-gray"},
-    {id:16, x:600,y:300, title:"Terminplaner",           name:"",sub:"",                   color:"c-gray"},
-    {id:17, x:710,y:300, title:"Fahrer / Begleitung",    name:"",sub:"",                   color:"c-gray"},
-    {id:18, x:120,y:440, title:"1-2 Helfer",             name:"",sub:"Einkauf",            color:"c-gray"},
-    {id:19, x:230,y:440, title:"2-3 Helfer",             name:"",sub:"Kochteam",           color:"c-gray"},
-    {id:20, x:320,y:440, title:"1 Bruder",               name:"",sub:"taeglich anwesend",  color:"c-gray"},
-    {id:21, x:410,y:440, title:"1-2 Helfer",             name:"",sub:"Reinigung",          color:"c-gray"}
+    {id:1,  x:330,y:30,  title:"Schulorganisator",       name:"",phone:"",sub:"Gesamtverantwortung",color:"c-purple",status:"open"},
+    {id:2,  x:30, y:160, title:"Technik & Schulungsraum",name:"",phone:"",sub:"Bereichsleiter",     color:"c-teal",  status:"open"},
+    {id:3,  x:170,y:160, title:"Verpflegung",            name:"",phone:"",sub:"Bereichsleiter",     color:"c-teal",  status:"open"},
+    {id:4,  x:340,y:160, title:"Unterkuenfte",           name:"",phone:"",sub:"Bereichsleiter",     color:"c-teal",  status:"open"},
+    {id:5,  x:500,y:160, title:"Geschenke",              name:"",phone:"",sub:"Bereichsleiter",     color:"c-teal",  status:"open"},
+    {id:6,  x:630,y:160, title:"Predigtdienst",          name:"",phone:"",sub:"Bereichsleiter",     color:"c-teal",  status:"open"},
+    {id:7,  x:20, y:300, title:"Techniker",              name:"",phone:"",sub:"Auf-/Abbau",         color:"c-gray",  status:"open"},
+    {id:8,  x:140,y:300, title:"Raumverantw.",           name:"",phone:"",sub:"",                   color:"c-gray",  status:"open"},
+    {id:9,  x:130,y:300, title:"Einkauf",                name:"",phone:"",sub:"Teamverantw.",       color:"c-coral", status:"open"},
+    {id:10, x:240,y:300, title:"Kochen",                 name:"",phone:"",sub:"Teamverantw.",       color:"c-coral", status:"open"},
+    {id:11, x:330,y:300, title:"Ausgabe",                name:"",phone:"",sub:"Teamverantw.",       color:"c-coral", status:"open"},
+    {id:12, x:420,y:300, title:"Reinigung",              name:"",phone:"",sub:"Teamverantw.",       color:"c-coral", status:"open"},
+    {id:13, x:320,y:300, title:"Koord. Gastgeber",       name:"",phone:"",sub:"",                   color:"c-gray",  status:"open"},
+    {id:14, x:440,y:300, title:"Kontakt Schueler",       name:"",phone:"",sub:"",                   color:"c-gray",  status:"open"},
+    {id:15, x:500,y:300, title:"Einkauf & Verteilung",   name:"",phone:"",sub:"",                   color:"c-gray",  status:"open"},
+    {id:16, x:600,y:300, title:"Terminplaner",           name:"",phone:"",sub:"",                   color:"c-gray",  status:"open"},
+    {id:17, x:710,y:300, title:"Fahrer / Begleitung",    name:"",phone:"",sub:"",                   color:"c-gray",  status:"open"},
+    {id:18, x:120,y:440, title:"1-2 Helfer",             name:"",phone:"",sub:"Einkauf",            color:"c-gray",  status:"open"},
+    {id:19, x:230,y:440, title:"2-3 Helfer",             name:"",phone:"",sub:"Kochteam",           color:"c-gray",  status:"open"},
+    {id:20, x:320,y:440, title:"1 Bruder",               name:"",phone:"",sub:"taeglich anwesend",  color:"c-gray",  status:"open"},
+    {id:21, x:410,y:440, title:"1-2 Helfer",             name:"",phone:"",sub:"Reinigung",          color:"c-gray",  status:"open"}
   ],
   edges: [[1,2],[1,3],[1,4],[1,5],[1,6],[2,7],[2,8],[3,9],[3,10],[3,11],[3,12],[4,13],[4,14],[5,15],[6,16],[6,17],[9,18],[10,19],[11,20],[12,21]],
   nextId: 22
 };
 
+var history = [];
 var sel=null, editId=null, dragObj=null, panObj=null;
 var pan={x:40,y:20}, zoom=1;
 var world=document.getElementById("world");
 var canvas=document.getElementById("canvas");
 var svgEl=document.getElementById("lines");
 
-function nW(n){ return Math.max(110,Math.min(150,n.title.length*8+28)); }
-function nH(n){ return n.name?70:n.sub?58:44; }
-function getNode(id){ for(var i=0;i<S.nodes.length;i++){ if(S.nodes[i].id===id) return S.nodes[i]; } return null; }
+function deepCopy(obj){ return JSON.parse(JSON.stringify(obj)); }
+function saveHistory(){ history.push(deepCopy(S)); if(history.length>50) history.shift(); }
+
+function getNode(id){
+  for(var i=0;i<S.nodes.length;i++){ if(S.nodes[i].id===id) return S.nodes[i]; }
+  return null;
+}
+function nW(n){ return Math.max(110,Math.min(155,n.title.length*8+28)); }
+function nH(n){
+  var h=36;
+  if(n.name) h+=16;
+  if(n.phone) h+=14;
+  if(n.sub) h+=14;
+  return h;
+}
 
 function render(){
   var els=world.querySelectorAll(".nd");
   for(var i=0;i<els.length;i++) els[i].remove();
   svgEl.innerHTML="";
-  svgEl.style.width="3000px";
-  svgEl.style.height="2000px";
+  svgEl.style.width="4000px";
+  svgEl.style.height="3000px";
 
   for(var e=0;e<S.edges.length;e++){
     var a=getNode(S.edges[e][0]);
@@ -162,10 +200,12 @@ function render(){
     el.style.left=nd.x+"px";
     el.style.top=nd.y+"px";
     el.style.width=nW(nd)+"px";
-    var html="<span class='eb' data-id='"+nd.id+"'>pencil</span>";
-    html+="<div class='nt'>"+nd.title+"</div>";
-    if(nd.name) html+="<div class='nn'>"+nd.name+"</div>";
-    if(nd.sub)  html+="<div class='ns'>"+nd.sub+"</div>";
+    var dot="<span class='status-dot "+(nd.status==="filled"?"s-filled":"s-open")+"'></span>";
+    var html="<span class='eb'>pencil</span>";
+    html+="<div class='nt'>"+dot+nd.title+"</div>";
+    if(nd.name)  html+="<div class='nn'>"+nd.name+"</div>";
+    if(nd.phone) html+="<div class='nph'>"+nd.phone+"</div>";
+    if(nd.sub)   html+="<div class='ns'>"+nd.sub+"</div>";
     el.innerHTML=html;
     el.querySelector(".eb").textContent="✎";
     (function(id){
@@ -178,12 +218,13 @@ function render(){
   }
 
   world.style.transform="translate("+pan.x+"px,"+pan.y+"px) scale("+zoom+")";
-  document.getElementById("zi").textContent=Math.round(zoom*100)+"%";
+  document.getElementById("ziTxt").textContent=Math.round(zoom*100)+"%";
 }
 
 function startDrag(ev,id){
   if(ev.button!==0) return;
   ev.stopPropagation();
+  saveHistory();
   var nd=getNode(id);
   sel=id;
   dragObj={id:id,sx:ev.clientX,sy:ev.clientY,ox:nd.x,oy:nd.y};
@@ -225,17 +266,31 @@ canvas.addEventListener("wheel",function(ev){
   pan.x=mx-(mx-pan.x)*d; pan.y=my-(my-pan.y)*d;
   zoom=Math.max(0.3,Math.min(2.5,zoom*d));
   world.style.transform="translate("+pan.x+"px,"+pan.y+"px) scale("+zoom+")";
-  document.getElementById("zi").textContent=Math.round(zoom*100)+"%";
+  document.getElementById("ziTxt").textContent=Math.round(zoom*100)+"%";
 },{passive:false});
+
+document.getElementById("bZoomIn").onclick=function(){
+  zoom=Math.min(2.5,zoom*1.15);
+  world.style.transform="translate("+pan.x+"px,"+pan.y+"px) scale("+zoom+")";
+  document.getElementById("ziTxt").textContent=Math.round(zoom*100)+"%";
+};
+document.getElementById("bZoomOut").onclick=function(){
+  zoom=Math.max(0.3,zoom*0.87);
+  world.style.transform="translate("+pan.x+"px,"+pan.y+"px) scale("+zoom+")";
+  document.getElementById("ziTxt").textContent=Math.round(zoom*100)+"%";
+};
 
 function openMo(id){
   var nd=getNode(id); editId=id;
   document.getElementById("eT").value=nd.title;
   document.getElementById("eN").value=nd.name;
+  document.getElementById("ePh").value=nd.phone||"";
   document.getElementById("eS").value=nd.sub;
+  document.getElementById("eSt").value=nd.status||"open";
   document.getElementById("eC").value=nd.color;
   document.getElementById("mo").style.display="block";
   document.getElementById("ov").style.display="block";
+  setTimeout(function(){ document.getElementById("eN").focus(); },50);
 }
 function closeMo(){
   document.getElementById("mo").style.display="none";
@@ -244,33 +299,103 @@ function closeMo(){
 document.getElementById("ov").onclick=closeMo;
 document.getElementById("bCloseMo").onclick=closeMo;
 document.getElementById("bSaveMo").onclick=function(){
+  saveHistory();
   var nd=getNode(editId);
   nd.title=document.getElementById("eT").value||nd.title;
   nd.name=document.getElementById("eN").value;
+  nd.phone=document.getElementById("ePh").value;
   nd.sub=document.getElementById("eS").value;
+  nd.status=document.getElementById("eSt").value;
   nd.color=document.getElementById("eC").value;
   closeMo(); render();
 };
 
 document.getElementById("bDel").onclick=function(){
   if(!sel||sel===1){ alert("Bitte zuerst eine Rolle anklicken."); return; }
-  if(!confirm("Rolle wirklich löschen?")) return;
+  if(!confirm("Rolle wirklich loeschen?")) return;
+  saveHistory();
   var newNodes=[]; for(var i=0;i<S.nodes.length;i++){ if(S.nodes[i].id!==sel) newNodes.push(S.nodes[i]); }
   var newEdges=[]; for(var i=0;i<S.edges.length;i++){ if(S.edges[i][0]!==sel&&S.edges[i][1]!==sel) newEdges.push(S.edges[i]); }
   S.nodes=newNodes; S.edges=newEdges; sel=null; render();
 };
 
+document.getElementById("bUndo").onclick=function(){
+  if(history.length===0){ alert("Nichts zum Rueckgaengig machen."); return; }
+  var prev=history.pop();
+  S.nodes=prev.nodes; S.edges=prev.edges; S.nextId=prev.nextId;
+  sel=null; render();
+};
+document.addEventListener("keydown",function(ev){
+  if((ev.ctrlKey||ev.metaKey)&&ev.key==="z"){
+    ev.preventDefault();
+    document.getElementById("bUndo").onclick();
+  }
+});
+
 document.getElementById("bAdd").onclick=function(){
   var title=prompt("Rollenbezeichnung:"); if(!title) return;
   var name=prompt("Name (optional):")||"";
+  var phone=prompt("Telefon (optional):")||"";
   var sub=prompt("Zusatzinfo (optional):")||"";
-  var cv=prompt("Farbe:\n1=Lila\n2=Grün\n3=Orange\n4=Grau")||"4";
+  var cv=prompt("Farbe:\n1=Lila\n2=Gruen\n3=Orange\n4=Grau")||"4";
   var cols={"1":"c-purple","2":"c-teal","3":"c-coral","4":"c-gray"};
   var pids=S.nodes.map(function(n){ return n.id+": "+n.title; }).join("\n");
-  var pid=parseInt(prompt("ID der übergeordneten Rolle:\n"+pids));
-  var nn={id:S.nextId++,x:200+Math.random()*200,y:200,title:title,name:name,sub:sub,color:cols[cv]||"c-gray"};
+  var pid=parseInt(prompt("ID der uebergeordneten Rolle:\n"+pids));
+  saveHistory();
+  var nn={id:S.nextId++,x:200+Math.random()*300,y:200,title:title,name:name,phone:phone,sub:sub,color:cols[cv]||"c-gray",status:"open"};
   S.nodes.push(nn);
   if(pid&&getNode(pid)) S.edges.push([pid,nn.id]);
+  render();
+};
+
+document.getElementById("bLayout").onclick=function(){
+  saveHistory();
+  // Build adjacency
+  var children={};
+  var hasParent={};
+  for(var i=0;i<S.nodes.length;i++){ children[S.nodes[i].id]=[]; }
+  for(var e=0;e<S.edges.length;e++){
+    var p=S.edges[e][0], c=S.edges[e][1];
+    if(children[p]) children[p].push(c);
+    hasParent[c]=true;
+  }
+  // Find roots
+  var roots=[];
+  for(var i=0;i<S.nodes.length;i++){
+    if(!hasParent[S.nodes[i].id]) roots.push(S.nodes[i].id);
+  }
+  // BFS level assignment
+  var levels={};
+  var queue=[];
+  for(var r=0;r<roots.length;r++){ levels[roots[r]]=0; queue.push(roots[r]); }
+  while(queue.length>0){
+    var cur=queue.shift();
+    var ch=children[cur]||[];
+    for(var k=0;k<ch.length;k++){
+      if(levels[ch[k]]===undefined){ levels[ch[k]]=(levels[cur]||0)+1; queue.push(ch[k]); }
+    }
+  }
+  // Group by level
+  var byLevel={};
+  for(var id in levels){
+    var lv=levels[id];
+    if(!byLevel[lv]) byLevel[lv]=[];
+    byLevel[lv].push(parseInt(id));
+  }
+  var yGap=140, xGap=20, startY=40;
+  for(var lv in byLevel){
+    var ids=byLevel[lv];
+    var totalW=0;
+    for(var i=0;i<ids.length;i++) totalW+=nW(getNode(ids[i]));
+    totalW+=xGap*(ids.length-1);
+    var startX=Math.max(20,(800-totalW)/2);
+    var cx=startX;
+    for(var i=0;i<ids.length;i++){
+      var nd=getNode(ids[i]);
+      nd.x=cx; nd.y=startY+lv*yGap;
+      cx+=nW(nd)+xGap;
+    }
+  }
   render();
 };
 
