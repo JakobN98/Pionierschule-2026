@@ -73,8 +73,8 @@ svg#lines{position:absolute;top:0;left:0;overflow:visible;pointer-events:none}
   <button class="btn" onclick="resetView()">Ansicht zurücksetzen</button>
   <button class="btn" onclick="window.print()">Drucken</button>
   <div class="sep"></div>
-  <button class="btn btn-primary" onclick="exportData()">💾 Speichern</button>
-  <label class="btn" style="cursor:pointer">📂 Laden <input type="file" accept=".json" onchange="importData(event)" style="display:none"/></label>
+  <button class="btn btn-primary" id="btn-export">💾 Speichern</button>
+  <label class="btn" style="cursor:pointer">📂 Laden <input type="file" id="btn-import" accept=".json" style="display:none"/></label>
   <span class="hint-bar">Ziehen = verschieben &nbsp;|&nbsp; Doppelklick = bearbeiten &nbsp;|&nbsp; Scroll = zoomen</span>
 </div>
 
@@ -230,9 +230,7 @@ function startDrag(e, id) {
   selId = id;
   drag = { id, startX: e.clientX, startY: e.clientY, ox: n.x, oy: n.y };
   document.getElementById('n'+id).classList.add('dragging');
-  render();
-
-function exportData() {
+  document.getElementById('btn-export').addEventListener('click', function() {
   try {
     const blob = new Blob([JSON.stringify({nodes, edges}, null, 2)], {type:'application/json'});
     const a = document.createElement('a');
@@ -241,10 +239,10 @@ function exportData() {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-  } catch(err) { alert('Fehler beim Speichern: ' + err.message); }
-}
+  } catch(err) { alert('Fehler: ' + err.message); }
+});
 
-function importData(e) {
+document.getElementById('btn-import').addEventListener('change', function(e) {
   const file = e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
@@ -255,11 +253,11 @@ function importData(e) {
       edges.splice(0, edges.length, ...d.edges);
       nextId = Math.max(...nodes.map(n=>n.id)) + 1;
       render();
-    } catch(err) { alert('Datei konnte nicht geladen werden: ' + err.message); }
+    } catch(err) { alert('Fehler beim Laden: ' + err.message); }
   };
   reader.readAsText(file);
   e.target.value = '';
-}
+});
 }
 document.addEventListener('mousemove', e => {
   if (drag) {
